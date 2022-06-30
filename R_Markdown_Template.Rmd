@@ -1,0 +1,91 @@
+---
+title: "R Markdown Template"
+author: "Lantz McGinnis-Brown"
+date: "5/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+library(palmerpenguins)
+library(tidyverse)
+library(kableExtra)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r penguins}
+summary(penguins)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(penguins)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+Here's an example of how to use tabs to explore different themes:
+
+## Penguin Measurements {.tabset}
+Here are some basic descriptive graphs of the penguins included in the palmer penguins dataset, arranged by species and sex.
+
+### Body Mass
+
+Overall, Gentoo penguins tend to be *heaviest*. However, penguins are sexually dimorphic, so males are usually heavier than females, regardless of species.
+
+```{r}
+ggplot(penguins) +
+  geom_boxplot(aes(x = species, y = body_mass_g, fill = sex)) +
+  theme_light()
+```
+
+### Flipper Length
+
+As the largest species, Gentoo also have the longest flippers.
+
+```{r}
+ggplot(penguins) +
+    geom_boxplot(aes(x = species, y = flipper_length_mm, fill = sex)) +
+    theme_light()
+```
+
+### Bill Dimensions
+
+Despite being heavier, and having longer flippers, Gentoos do **not** tend to have any longer beaks than Chinstraps,and they tend to have shallower beaks than Adelies.
+
+```{r}
+penguins %>%
+  filter(!is.na(sex)) %>%
+ ggplot() +
+    geom_point(aes(x = bill_depth_mm, y = bill_length_mm, color = species)) +
+    facet_wrap(.~sex) +
+    theme_light() +
+    theme(legend.position = "bottom")
+    
+```
+
+##  Another Heading
+I can also include tables in the document:
+```{r}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  group_by(species, sex) %>%
+  summarize(Average_Weight_in_Grams = mean(body_mass_g)) %>%
+  knitr::kable(align = "lcc", caption = "Table 1: Average Penguin Weights by Species and Sex") %>%
+  kable_minimal(full_width = F) %>%
+  column_spec(1, bold = T) %>%
+  row_spec(1:2, color = "blue") %>%
+  row_spec(3:4, color = "green") %>%
+  row_spec(5:6, color = "purple")#The kable family of functions lets us build tables in html format.
+  
+```
+
+
